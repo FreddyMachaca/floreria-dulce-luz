@@ -183,8 +183,20 @@ nav.scrolled {
 	height: 100vh;
 	overflow: hidden;
 	display: flex;
-	align-items: center;
+	align-items: stretch;
 	justify-content: center;
+}
+
+.hero-layout {
+	position: relative;
+	z-index: 9;
+	width: min(1280px, 100%);
+	height: 100%;
+	display: grid;
+	grid-template-columns: 0.95fr 1.05fr;
+	align-items: center;
+	gap: 1rem;
+	padding: 6.5rem 3rem 3.5rem;
 }
 
 .parallax-layer {
@@ -206,6 +218,23 @@ nav.scrolled {
 	inset: 0;
 }
 
+.spline-layer {
+	position: relative;
+	inset: auto;
+	z-index: 7;
+	opacity: 0.95;
+	will-change: transform;
+	height: min(90vh, 860px);
+	width: 108%;
+	margin-left: -4%;
+}
+
+.spline-layer > div,
+.spline-layer canvas {
+	width: 100% !important;
+	height: 100% !important;
+}
+
 .flower-layer {
 	position: absolute;
 	inset: 0;
@@ -215,10 +244,11 @@ nav.scrolled {
 .hero-content {
 	position: relative;
 	z-index: 10;
-	text-align: center;
+	text-align: left;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: flex-start;
+	max-width: 620px;
 }
 
 .hero-eyebrow {
@@ -1016,6 +1046,25 @@ footer {
 
 	.nav-links {
 		display: none;
+	}
+
+	.hero-layout {
+		grid-template-columns: 1fr;
+		gap: 0.6rem;
+		padding: 6.2rem 1.5rem 3rem;
+	}
+
+	.hero-content {
+		text-align: center;
+		align-items: center;
+		max-width: 100%;
+	}
+
+	.spline-layer {
+		opacity: 0.88;
+		height: 58vh;
+		width: 100%;
+		margin-left: 0;
 	}
 
 	.about {

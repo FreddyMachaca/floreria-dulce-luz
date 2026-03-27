@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import Spline from '@splinetool/react-spline'
 
 const WHATSAPP_NUMBER = '59163256258'
 
@@ -14,10 +15,17 @@ function App() {
 	const cursorDotRef = useRef(null)
 	const cursorRingRef = useRef(null)
 	const layerMistRef = useRef(null)
-	const flowerBackRef = useRef(null)
-	const flowerMidRef = useRef(null)
-	const flowerFrontRef = useRef(null)
+	const splineLayerRef = useRef(null)
 	const canvasRef = useRef(null)
+
+	const handleSplineLoad = (splineApp) => {
+		const orbit = splineApp?.controls?.orbitControls
+		if (!orbit) return
+		orbit.enableZoom = false
+		orbit.isTouchZoom = false
+		orbit.enablePan = false
+		orbit.enableRotate = true
+	}
 
 	useEffect(() => {
 		const dot = cursorDotRef.current
@@ -73,9 +81,7 @@ function App() {
 	useEffect(() => {
 		const hero = heroRef.current
 		const layers = [
-			{ el: flowerBackRef.current, depth: 0.06 },
-			{ el: flowerMidRef.current, depth: 0.15 },
-			{ el: flowerFrontRef.current, depth: 0.28 },
+			{ el: splineLayerRef.current, depth: 0.18 },
 			{ el: layerMistRef.current, depth: 0.08 },
 		].filter((item) => item.el)
 
@@ -255,119 +261,27 @@ function App() {
 				<div className="parallax-layer layer-bg" />
 				<div className="parallax-layer layer-mist" ref={layerMistRef} />
 
-				<div className="flower-layer" ref={flowerBackRef}>
-					<svg viewBox="0 0 1440 900" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
-						<g transform="translate(-60,520) scale(2.8) rotate(-15)" opacity=".18">
-							<circle cx="60" cy="60" r="28" fill="#E8B4C0" />
-							<ellipse cx="60" cy="32" rx="16" ry="28" fill="#E8B4C0" transform="rotate(0,60,60)" />
-							<ellipse cx="60" cy="32" rx="16" ry="28" fill="#DDA0B0" transform="rotate(45,60,60)" />
-							<ellipse cx="60" cy="32" rx="16" ry="28" fill="#E8B4C0" transform="rotate(90,60,60)" />
-							<ellipse cx="60" cy="32" rx="16" ry="28" fill="#DDA0B0" transform="rotate(135,60,60)" />
-							<ellipse cx="60" cy="32" rx="16" ry="28" fill="#E8B4C0" transform="rotate(180,60,60)" />
-							<ellipse cx="60" cy="32" rx="16" ry="28" fill="#DDA0B0" transform="rotate(225,60,60)" />
-							<ellipse cx="60" cy="32" rx="16" ry="28" fill="#E8B4C0" transform="rotate(270,60,60)" />
-							<ellipse cx="60" cy="32" rx="16" ry="28" fill="#DDA0B0" transform="rotate(315,60,60)" />
-							<circle cx="60" cy="60" r="14" fill="#F5D0D8" />
-						</g>
-						<g transform="translate(1350,80) scale(3) rotate(20)" opacity=".15">
-							<circle cx="60" cy="60" r="28" fill="#B8CDB8" />
-							<ellipse cx="60" cy="32" rx="16" ry="28" fill="#B8CDB8" transform="rotate(0,60,60)" />
-							<ellipse cx="60" cy="32" rx="16" ry="28" fill="#9AAA9A" transform="rotate(60,60,60)" />
-							<ellipse cx="60" cy="32" rx="16" ry="28" fill="#B8CDB8" transform="rotate(120,60,60)" />
-							<ellipse cx="60" cy="32" rx="16" ry="28" fill="#9AAA9A" transform="rotate(180,60,60)" />
-							<ellipse cx="60" cy="32" rx="16" ry="28" fill="#B8CDB8" transform="rotate(240,60,60)" />
-							<ellipse cx="60" cy="32" rx="16" ry="28" fill="#9AAA9A" transform="rotate(300,60,60)" />
-							<circle cx="60" cy="60" r="14" fill="#D0E0D0" />
-						</g>
-						<path d="M100,900 Q200,600 150,200" stroke="#C9A96E" strokeWidth="2" fill="none" opacity=".12" />
-						<path d="M1380,0 Q1300,300 1350,700" stroke="#C9A96E" strokeWidth="1.5" fill="none" opacity=".1" />
-					</svg>
-				</div>
+				<div className="hero-layout">
+					<div className="hero-content">
+						<p className="hero-eyebrow">La Paz, Bolivia · Desde el corazon</p>
+						<h1 className="hero-title">
+							Flores que
+							<br />
+							<em>hablan</em> por ti
+						</h1>
+						<p className="hero-sub">Arreglos florales con alma. Creados con amor para cada momento especial de tu vida.</p>
+						<div className="hero-actions">
+							<a href="#catalogo" className="btn-primary">
+								Ver catalogo
+							</a>
+							<a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noreferrer" className="btn-ghost">
+								Pedir por WhatsApp
+							</a>
+						</div>
+					</div>
 
-				<div className="flower-layer" ref={flowerMidRef}>
-					<svg viewBox="0 0 1440 900" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
-						<g transform="translate(40,100) scale(1.6) rotate(10)" style={{ animation: 'floatA 7s ease-in-out infinite' }} opacity=".55">
-							<ellipse cx="50" cy="20" rx="12" ry="20" fill="#E8B4C0" transform="rotate(0,50,50)" />
-							<ellipse cx="50" cy="20" rx="12" ry="20" fill="#DDA0B0" transform="rotate(60,50,50)" />
-							<ellipse cx="50" cy="20" rx="12" ry="20" fill="#E8B4C0" transform="rotate(120,50,50)" />
-							<ellipse cx="50" cy="20" rx="12" ry="20" fill="#DDA0B0" transform="rotate(180,50,50)" />
-							<ellipse cx="50" cy="20" rx="12" ry="20" fill="#E8B4C0" transform="rotate(240,50,50)" />
-							<ellipse cx="50" cy="20" rx="12" ry="20" fill="#DDA0B0" transform="rotate(300,50,50)" />
-							<circle cx="50" cy="50" r="10" fill="#FAD0DA" />
-						</g>
-						<g transform="translate(1280,550) scale(1.4) rotate(-8)" style={{ animation: 'floatB 9s ease-in-out infinite' }} opacity=".5">
-							<ellipse cx="50" cy="20" rx="12" ry="20" fill="#B8CDB8" transform="rotate(0,50,50)" />
-							<ellipse cx="50" cy="20" rx="12" ry="20" fill="#8A9E8A" transform="rotate(72,50,50)" />
-							<ellipse cx="50" cy="20" rx="12" ry="20" fill="#B8CDB8" transform="rotate(144,50,50)" />
-							<ellipse cx="50" cy="20" rx="12" ry="20" fill="#8A9E8A" transform="rotate(216,50,50)" />
-							<ellipse cx="50" cy="20" rx="12" ry="20" fill="#B8CDB8" transform="rotate(288,50,50)" />
-							<circle cx="50" cy="50" r="9" fill="#D0E0D0" />
-						</g>
-						<g transform="translate(680,30) scale(1.1)" style={{ animation: 'floatC 11s ease-in-out infinite' }} opacity=".35">
-							<ellipse cx="40" cy="12" rx="9" ry="16" fill="#E8D5B0" transform="rotate(0,40,40)" />
-							<ellipse cx="40" cy="12" rx="9" ry="16" fill="#C9A96E" transform="rotate(90,40,40)" />
-							<ellipse cx="40" cy="12" rx="9" ry="16" fill="#E8D5B0" transform="rotate(180,40,40)" />
-							<ellipse cx="40" cy="12" rx="9" ry="16" fill="#C9A96E" transform="rotate(270,40,40)" />
-							<circle cx="40" cy="40" r="8" fill="#FAE8C0" />
-						</g>
-					</svg>
-				</div>
-
-				<div className="flower-layer" ref={flowerFrontRef}>
-					<svg viewBox="0 0 1440 900" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, overflow: 'visible' }}>
-						<g transform="translate(-30,780) scale(2.2) rotate(-5)" style={{ animation: 'floatA 8s 1s ease-in-out infinite' }} opacity=".7">
-							<ellipse cx="55" cy="18" rx="14" ry="24" fill="#F0B8C4" transform="rotate(0,55,55)" />
-							<ellipse cx="55" cy="18" rx="14" ry="24" fill="#E8A0B0" transform="rotate(51,55,55)" />
-							<ellipse cx="55" cy="18" rx="14" ry="24" fill="#F0B8C4" transform="rotate(102,55,55)" />
-							<ellipse cx="55" cy="18" rx="14" ry="24" fill="#E8A0B0" transform="rotate(153,55,55)" />
-							<ellipse cx="55" cy="18" rx="14" ry="24" fill="#F0B8C4" transform="rotate(204,55,55)" />
-							<ellipse cx="55" cy="18" rx="14" ry="24" fill="#E8A0B0" transform="rotate(255,55,55)" />
-							<ellipse cx="55" cy="18" rx="14" ry="24" fill="#F0B8C4" transform="rotate(306,55,55)" />
-							<circle cx="55" cy="55" r="12" fill="#FDEEF1" />
-							<circle cx="55" cy="55" r="6" fill="#E8A0B0" />
-						</g>
-						<g transform="translate(1310,720) scale(1.9) rotate(12)" style={{ animation: 'floatB 10s 2s ease-in-out infinite' }} opacity=".65">
-							<ellipse cx="50" cy="16" rx="12" ry="22" fill="#C9D5C9" transform="rotate(0,50,50)" />
-							<ellipse cx="50" cy="16" rx="12" ry="22" fill="#A0B8A0" transform="rotate(60,50,50)" />
-							<ellipse cx="50" cy="16" rx="12" ry="22" fill="#C9D5C9" transform="rotate(120,50,50)" />
-							<ellipse cx="50" cy="16" rx="12" ry="22" fill="#A0B8A0" transform="rotate(180,50,50)" />
-							<ellipse cx="50" cy="16" rx="12" ry="22" fill="#C9D5C9" transform="rotate(240,50,50)" />
-							<ellipse cx="50" cy="16" rx="12" ry="22" fill="#A0B8A0" transform="rotate(300,50,50)" />
-							<circle cx="50" cy="50" r="10" fill="#E0F0E0" />
-						</g>
-						<g transform="translate(1150,120) scale(1) rotate(-20)" style={{ animation: 'floatC 7s 3s ease-in-out infinite' }} opacity=".55">
-							<ellipse cx="30" cy="10" rx="8" ry="14" fill="#E8D5B0" transform="rotate(0,30,30)" />
-							<ellipse cx="30" cy="10" rx="8" ry="14" fill="#D4BC88" transform="rotate(72,30,30)" />
-							<ellipse cx="30" cy="10" rx="8" ry="14" fill="#E8D5B0" transform="rotate(144,30,30)" />
-							<ellipse cx="30" cy="10" rx="8" ry="14" fill="#D4BC88" transform="rotate(216,30,30)" />
-							<ellipse cx="30" cy="10" rx="8" ry="14" fill="#E8D5B0" transform="rotate(288,30,30)" />
-							<circle cx="30" cy="30" r="6" fill="#FFF0D0" />
-						</g>
-						<g transform="translate(180,420) scale(.85) rotate(8)" style={{ animation: 'floatA 9s .5s ease-in-out infinite' }} opacity=".5">
-							<ellipse cx="30" cy="10" rx="8" ry="14" fill="#F0B8C4" transform="rotate(0,30,30)" />
-							<ellipse cx="30" cy="10" rx="8" ry="14" fill="#E090A8" transform="rotate(90,30,30)" />
-							<ellipse cx="30" cy="10" rx="8" ry="14" fill="#F0B8C4" transform="rotate(180,30,30)" />
-							<ellipse cx="30" cy="10" rx="8" ry="14" fill="#E090A8" transform="rotate(270,30,30)" />
-							<circle cx="30" cy="30" r="6" fill="#FDEEF1" />
-						</g>
-					</svg>
-				</div>
-
-				<div className="hero-content">
-					<p className="hero-eyebrow">La Paz, Bolivia · Desde el corazon</p>
-					<h1 className="hero-title">
-						Flores que
-						<br />
-						<em>hablan</em> por ti
-					</h1>
-					<p className="hero-sub">Arreglos florales con alma. Creados con amor para cada momento especial de tu vida.</p>
-					<div className="hero-actions">
-						<a href="#catalogo" className="btn-primary">
-							Ver catalogo
-						</a>
-						<a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noreferrer" className="btn-ghost">
-							Pedir por WhatsApp
-						</a>
+					<div className="spline-layer" ref={splineLayerRef}>
+						<Spline scene="https://prod.spline.design/Tp05cFRZa6wXbbmp/scene.splinecode" onLoad={handleSplineLoad} />
 					</div>
 				</div>
 

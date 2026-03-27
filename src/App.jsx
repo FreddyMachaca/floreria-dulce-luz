@@ -21,10 +21,19 @@ function App() {
 	const handleSplineLoad = (splineApp) => {
 		const orbit = splineApp?.controls?.orbitControls
 		if (!orbit) return
+		const isMobile = window.matchMedia('(max-width: 768px)').matches
 		orbit.enableZoom = false
 		orbit.isTouchZoom = false
 		orbit.enablePan = false
 		orbit.enableRotate = true
+		if (isMobile && Array.isArray(orbit.touches)) {
+			orbit.touches[0] = 0
+			orbit.touches[1] = 0
+			orbit.touches[2] = 0
+		}
+		if (typeof splineApp?.setZoom === 'function') {
+			splineApp.setZoom(isMobile ? 0.56 : 1)
+		}
 	}
 
 	useEffect(() => {
@@ -285,10 +294,6 @@ function App() {
 					</div>
 				</div>
 
-				<div className="hero-scroll">
-					<span>Explorar</span>
-					<div className="scroll-line" />
-				</div>
 			</section>
 
 			<div className="marquee-wrap" aria-hidden="true">

@@ -345,33 +345,6 @@ nav.scrolled {
 	border-color: var(--rose);
 }
 
-.hero-scroll {
-	position: absolute;
-	bottom: 2.5rem;
-	left: 50%;
-	transform: translateX(-50%);
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 0.6rem;
-	opacity: 0;
-	animation: fadeUp 0.6s 1.4s forwards;
-}
-
-.hero-scroll span {
-	font-size: 0.65rem;
-	letter-spacing: 0.2em;
-	color: var(--muted);
-	text-transform: uppercase;
-}
-
-.scroll-line {
-	width: 1px;
-	height: 48px;
-	background: linear-gradient(to bottom, var(--rose-lt), transparent);
-	animation: scrollPulse 2s infinite;
-}
-
 #petal-canvas {
 	position: fixed;
 	inset: 0;
@@ -1062,9 +1035,9 @@ footer {
 
 	.spline-layer {
 		opacity: 0.88;
-		height: 58vh;
+		height: 52vh;
 		width: 100%;
-		margin-left: 0;
+		margin: 0;
 	}
 
 	.about {

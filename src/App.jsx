@@ -158,7 +158,7 @@ function App() {
 			wobbleSpeed: 0.01 + Math.random() * 0.02,
 		})
 
-		const petals = Array.from({ length: 18 }, () => createPetal(false))
+		const petals = Array.from({ length: 30 }, () => createPetal(false))
 
 		const drawPetal = (petal) => {
 			ctx.save()

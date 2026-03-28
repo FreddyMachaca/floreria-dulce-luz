@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import AdminNav from '../../components/admin/AdminNav'
+import AdminLayout from '../../components/admin/AdminLayout'
 import { dashboardService } from '../../services/dashboardService'
 import { formatCurrency } from '../../utils/currencyUtils'
 import './AdminPanel.css'
@@ -35,36 +35,36 @@ const DashboardPage = () => {
   const ordenesRecientes = dashboard?.ultimasOrdenes || []
 
   return (
-    <main className="admin-shell">
-      <section className="admin-container">
-        <AdminNav />
+    <AdminLayout title="Dashboard" subtitle="Resumen de ventas, productos y ordenes de Floreria Dulce Luz">
+      <article className="admin-card">
+        {loading ? <p className="admin-message">Cargando metricas...</p> : null}
+        {message ? <p className="admin-message">{message}</p> : null}
 
-        <article className="admin-card">
-          <h1 className="admin-title">Dashboard</h1>
-
-          {loading ? <p className="admin-message">Cargando metricas...</p> : null}
-          {message ? <p className="admin-message">{message}</p> : null}
-
-          <div className="metrics-grid">
-            <div className="metric-box">
-              <div className="metric-label">Ordenes pagadas (30 dias)</div>
-              <div className="metric-value">{resumen.totalOrdenes || 0}</div>
-            </div>
-            <div className="metric-box">
-              <div className="metric-label">Ingresos (30 dias)</div>
-              <div className="metric-value">{formatCurrency(resumen.ingresosTotales || 0)}</div>
-            </div>
-            <div className="metric-box">
-              <div className="metric-label">Productos activos</div>
-              <div className="metric-value">{resumen.total_productos || stats?.totalProductos || 0}</div>
-            </div>
-            <div className="metric-box">
-              <div className="metric-label">Ordenes pendientes</div>
-              <div className="metric-value">{resumen.ordenes_pendientes || stats?.ordenesPendientes || 0}</div>
-            </div>
+        <div className="metrics-grid">
+          <div className="metric-box">
+            <div className="metric-label">Ordenes pagadas (30 dias)</div>
+            <div className="metric-value">{resumen.totalOrdenes || 0}</div>
           </div>
+          <div className="metric-box">
+            <div className="metric-label">Ingresos (30 dias)</div>
+            <div className="metric-value">{formatCurrency(resumen.ingresosTotales || 0)}</div>
+          </div>
+          <div className="metric-box">
+            <div className="metric-label">Productos activos</div>
+            <div className="metric-value">{resumen.total_productos || stats?.totalProductos || 0}</div>
+          </div>
+          <div className="metric-box">
+            <div className="metric-label">Ordenes pendientes</div>
+            <div className="metric-value">{resumen.ordenes_pendientes || stats?.ordenesPendientes || 0}</div>
+          </div>
+        </div>
+      </article>
 
-          <h2 style={{ color: 'var(--ink)', marginTop: '0.5rem' }}>Ordenes recientes</h2>
+      <article className="admin-card">
+        <div className="admin-card-head">
+          <h2>Ordenes recientes</h2>
+        </div>
+        <div className="admin-table-wrap">
           <table className="admin-table">
             <thead>
               <tr>
@@ -85,15 +85,19 @@ const DashboardPage = () => {
                     <td>{orden.codigo_unico}</td>
                     <td>{orden.cliente_nombre} {orden.cliente_apellido}</td>
                     <td>{formatCurrency(orden.total)}</td>
-                    <td>{orden.estado}</td>
+                    <td>
+                      <span className={`admin-chip ${orden.estado === 'pagado' ? 'ok' : orden.estado === 'pendiente' ? 'warn' : 'off'}`}>
+                        {orden.estado}
+                      </span>
+                    </td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
-        </article>
-      </section>
-    </main>
+        </div>
+      </article>
+    </AdminLayout>
   )
 }
 

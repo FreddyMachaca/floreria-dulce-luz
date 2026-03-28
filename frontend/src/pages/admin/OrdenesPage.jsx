@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import AdminNav from '../../components/admin/AdminNav'
+import AdminLayout from '../../components/admin/AdminLayout'
 import { ordenService } from '../../services/ordenService'
 import { formatCurrency } from '../../utils/currencyUtils'
 import './AdminPanel.css'
@@ -38,15 +38,15 @@ const OrdenesPage = () => {
   }
 
   return (
-    <main className="admin-shell">
-      <section className="admin-container">
-        <AdminNav />
-
-        <article className="admin-card">
-          <h1 className="admin-title">Gestion de Ordenes</h1>
+    <AdminLayout title="Gestion de Ordenes" subtitle="Control de estados de compra y seguimiento de pedidos">
+      <article className="admin-card">
+        <div className="admin-card-head">
+          <h2>Listado de ordenes</h2>
           {loading ? <p className="admin-message">Cargando ordenes...</p> : null}
-          {message ? <p className="admin-message">{message}</p> : null}
+        </div>
+        {message ? <p className="admin-message">{message}</p> : null}
 
+        <div className="admin-table-wrap">
           <table className="admin-table">
             <thead>
               <tr>
@@ -88,9 +88,9 @@ const OrdenesPage = () => {
               )}
             </tbody>
           </table>
-        </article>
-      </section>
-    </main>
+        </div>
+      </article>
+    </AdminLayout>
   )
 }
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import AdminNav from '../../components/admin/AdminNav'
+import AdminLayout from '../../components/admin/AdminLayout'
 import { productoService } from '../../services/productoService'
 import { formatCurrency } from '../../utils/currencyUtils'
 import './AdminPanel.css'
@@ -117,61 +117,68 @@ const ProductosPage = () => {
   }
 
   return (
-    <main className="admin-shell">
-      <section className="admin-container">
-        <AdminNav />
+    <AdminLayout
+      title="CRUD de Productos"
+      subtitle="Crea, edita y elimina productos desde un solo flujo"
+      actions={
+        isEditing ? (
+          <button type="button" className="admin-header-button secondary" onClick={resetForm}>
+            Cancelar edicion
+          </button>
+        ) : null
+      }
+    >
+      <article className="admin-card">
+        <div className="admin-card-head">
+          <h2>{isEditing ? 'Editar producto' : 'Nuevo producto'}</h2>
+        </div>
 
-        <article className="admin-card" style={{ marginBottom: '1rem' }}>
-          <h1 className="admin-title">CRUD de Productos</h1>
+        <form className="admin-form" onSubmit={handleSubmit}>
+          <input name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} required />
+          <input name="precio" type="number" step="0.01" min="0" placeholder="Precio" value={formData.precio} onChange={handleChange} required />
+          <textarea className="full" name="descripcion" placeholder="Descripcion" value={formData.descripcion} onChange={handleChange} />
+          <input
+            name="cantidad"
+            type="number"
+            min="0"
+            placeholder="Cantidad"
+            value={formData.cantidad}
+            onChange={handleChange}
+            disabled={formData.es_servicio}
+          />
+          <input name="imagen" placeholder="URL de imagen (opcional)" value={formData.imagen} onChange={handleChange} />
 
-          <form className="admin-form" onSubmit={handleSubmit}>
-            <input name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} required />
-            <input name="precio" type="number" step="0.01" min="0" placeholder="Precio" value={formData.precio} onChange={handleChange} required />
-            <textarea className="full" name="descripcion" placeholder="Descripcion" value={formData.descripcion} onChange={handleChange} />
-            <input
-              name="cantidad"
-              type="number"
-              min="0"
-              placeholder="Cantidad"
-              value={formData.cantidad}
-              onChange={handleChange}
-              disabled={formData.es_servicio}
-            />
-            <input name="imagen" placeholder="URL de imagen (opcional)" value={formData.imagen} onChange={handleChange} />
+          <select name="estado" value={formData.estado} onChange={handleChange}>
+            <option value="disponible">disponible</option>
+            <option value="no_disponible">no_disponible</option>
+          </select>
 
-            <select name="estado" value={formData.estado} onChange={handleChange}>
-              <option value="disponible">disponible</option>
-              <option value="no_disponible">no_disponible</option>
-            </select>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--ink)' }}>
+            <input type="checkbox" name="es_servicio" checked={formData.es_servicio} onChange={handleChange} />
+            Es servicio
+          </label>
 
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--ink)' }}>
-              <input type="checkbox" name="es_servicio" checked={formData.es_servicio} onChange={handleChange} />
-              Es servicio
-            </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--ink)' }}>
+            <input type="checkbox" name="activo" checked={formData.activo} onChange={handleChange} />
+            Activo
+          </label>
 
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--ink)' }}>
-              <input type="checkbox" name="activo" checked={formData.activo} onChange={handleChange} />
-              Activo
-            </label>
+          <div className="admin-inline-actions full">
+            <button type="submit" className="admin-button" disabled={saving}>
+              {saving ? 'Guardando...' : isEditing ? 'Actualizar' : 'Crear'}
+            </button>
+          </div>
+        </form>
 
-            <div className="admin-inline-actions full">
-              <button type="submit" className="admin-button" disabled={saving}>
-                {saving ? 'Guardando...' : isEditing ? 'Actualizar' : 'Crear'}
-              </button>
-              {isEditing ? (
-                <button type="button" className="admin-button secondary" onClick={resetForm}>
-                  Cancelar edicion
-                </button>
-              ) : null}
-            </div>
-          </form>
+        {message ? <p className="admin-message">{message}</p> : null}
+      </article>
 
-          {message ? <p className="admin-message">{message}</p> : null}
-        </article>
-
-        <article className="admin-card">
-          <h2 style={{ color: 'var(--ink)' }}>Listado de productos</h2>
+      <article className="admin-card">
+        <div className="admin-card-head">
+          <h2>Listado de productos</h2>
           {loading ? <p className="admin-message">Cargando productos...</p> : null}
+        </div>
+        <div className="admin-table-wrap">
           <table className="admin-table">
             <thead>
               <tr>
@@ -194,8 +201,16 @@ const ProductosPage = () => {
                     <td>{producto.nombre}</td>
                     <td>{formatCurrency(producto.precio)}</td>
                     <td>{producto.es_servicio ? 'Servicio' : producto.cantidad}</td>
-                    <td>{producto.estado}</td>
-                    <td>{producto.activo ? 'Si' : 'No'}</td>
+                    <td>
+                      <span className={`admin-chip ${producto.estado === 'disponible' ? 'ok' : 'off'}`}>
+                        {producto.estado}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`admin-chip ${producto.activo ? 'ok' : 'off'}`}>
+                        {producto.activo ? 'si' : 'no'}
+                      </span>
+                    </td>
                     <td>
                       <div className="admin-inline-actions">
                         <button type="button" className="admin-button secondary" onClick={() => handleEdit(producto)}>
@@ -211,9 +226,9 @@ const ProductosPage = () => {
               )}
             </tbody>
           </table>
-        </article>
-      </section>
-    </main>
+        </div>
+      </article>
+    </AdminLayout>
   )
 }
 

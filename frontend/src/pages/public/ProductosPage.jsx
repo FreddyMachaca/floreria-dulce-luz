@@ -11,6 +11,7 @@ const ProductosPage = () => {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [totalRecords, setTotalRecords] = useState(0)
   const [fetching, setFetching] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -25,9 +26,11 @@ const ProductosPage = () => {
 
       setProductos(response.data?.productos || [])
       setTotalPages(response.data?.pagination?.totalPages || 1)
+      setTotalRecords(response.data?.pagination?.total || 0)
     } catch (error) {
       setProductos([])
       setTotalPages(1)
+      setTotalRecords(0)
       setMessage(error.response?.data?.message || 'No se pudo cargar el catalogo')
     } finally {
       setFetching(false)
@@ -56,34 +59,46 @@ const ProductosPage = () => {
   return (
     <main className="shop-shell">
       <section className="shop-container">
-        <header className="shop-header">
-          <div>
-            <h1 className="shop-title">Catalogo de Productos</h1>
-            <p style={{ color: 'var(--muted)' }}>Floreria Dulce Luz · Moneda Bs</p>
-          </div>
+        <section className="catalog-hero">
+          <header className="shop-header">
+            <div>
+              <h1 className="shop-title">Catalogo de Productos</h1>
+              <p style={{ color: 'var(--muted)', marginTop: '0.45rem' }}>Floreria Dulce Luz · Moneda Bs</p>
+            </div>
 
-          <div className="shop-actions">
-            <Link className="shop-button secondary" to="/">
-              Volver
-            </Link>
-            <Link className="shop-button" to="/carrito">
-              Carrito ({itemCount})
-            </Link>
-          </div>
-        </header>
+            <div className="shop-actions">
+              <Link className="shop-button secondary" to="/">
+                Volver
+              </Link>
+              <Link className="shop-button" to="/carrito">
+                Carrito ({itemCount})
+              </Link>
+            </div>
+          </header>
 
-        <input
-          className="shop-search"
-          value={search}
-          onChange={(event) => {
-            setPage(1)
-            setSearch(event.target.value)
-          }}
-          placeholder="Buscar flores, ramos o arreglos"
-        />
+          <div className="shop-toolbar">
+            <div className="search-wrap">
+              <i className="pi pi-search search-icon" />
+              <input
+                className="shop-search"
+                value={search}
+                onChange={(event) => {
+                  setPage(1)
+                  setSearch(event.target.value)
+                }}
+                placeholder="Buscar flores, ramos o arreglos"
+              />
+            </div>
+
+            <div className="catalog-stats">
+              <i className="pi pi-box" />
+              <span>{totalRecords} productos</span>
+            </div>
+          </div>
+        </section>
 
         {message ? (
-          <div style={{ marginBottom: '1rem', color: 'var(--muted)' }}>{message}</div>
+          <div className="shop-notice">{message}</div>
         ) : null}
 
         {fetching ? (
@@ -94,11 +109,14 @@ const ProductosPage = () => {
           <div className="products-grid">
             {productos.map((producto) => (
               <article key={producto.id} className="product-card">
-                {producto.imagen ? (
-                  <img src={producto.imagen} alt={producto.nombre} className="product-img" />
-                ) : (
-                  <div className="product-img" />
-                )}
+                <div className="product-media">
+                  {producto.imagen ? (
+                    <img src={producto.imagen} alt={producto.nombre} className="product-img" />
+                  ) : (
+                    <div className="product-img" />
+                  )}
+                  <span className="product-badge">{producto.es_servicio ? 'Servicio' : 'Producto'}</span>
+                </div>
 
                 <div className="product-name">{producto.nombre}</div>
                 <div className="product-description">{producto.descripcion || 'Sin descripcion'}</div>
@@ -108,9 +126,11 @@ const ProductosPage = () => {
                   <span className="product-tag">{producto.es_servicio ? 'Servicio' : `Stock ${producto.cantidad}`}</span>
                 </div>
 
-                <button type="button" className="shop-button" disabled={loading} onClick={() => handleAddToCart(producto.id)}>
-                  Agregar al carrito
-                </button>
+                <div className="product-actions">
+                  <button type="button" className="shop-button" disabled={loading} onClick={() => handleAddToCart(producto.id)}>
+                    Agregar al carrito
+                  </button>
+                </div>
               </article>
             ))}
           </div>
@@ -129,6 +149,11 @@ const ProductosPage = () => {
             </button>
           </div>
         ) : null}
+
+        <Link to="/carrito" className="cart-fab" aria-label="Ir al carrito">
+          <i className="pi pi-shopping-cart" />
+          <span className="cart-fab-count">{itemCount}</span>
+        </Link>
       </section>
     </main>
   )

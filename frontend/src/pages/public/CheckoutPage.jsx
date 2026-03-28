@@ -219,7 +219,9 @@ const CheckoutPage = () => {
         {step === 2 ? (
           <section className="checkout-panel qr-box">
             <h2>Escanea el QR</h2>
-            <p style={{ color: 'var(--muted)' }}>Monto: {formatCurrency(qrData?.total || cart?.total)}</p>
+            <p className="qr-amount">
+              Monto: <strong>{formatCurrency(qrData?.total || cart?.total)}</strong>
+            </p>
 
             {qrData ? (
               <img className="qr-image" src={getQrImageSource(qrData)} alt="QR de pago" />

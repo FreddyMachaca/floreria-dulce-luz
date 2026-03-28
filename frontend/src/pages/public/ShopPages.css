@@ -409,6 +409,25 @@
   gap: 0.7rem;
 }
 
+.qr-amount {
+  margin: 0.2rem 0 0.35rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.8rem;
+  background: rgba(201, 120, 138, 0.12);
+  border: 1px solid rgba(201, 120, 138, 0.25);
+  color: #8e3a4f;
+  font-size: clamp(1.15rem, 2.5vw, 1.45rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.qr-amount strong {
+  color: #8b1d3d;
+  font-size: clamp(1.45rem, 3.8vw, 2.1rem);
+  font-weight: 800;
+  margin-left: 0.2rem;
+}
+
 .qr-image {
   width: min(320px, 100%);
   border-radius: 1rem;
@@ -464,5 +483,10 @@
   .cart-fab {
     width: 3.1rem;
     height: 3.1rem;
+  }
+
+  .qr-amount {
+    text-align: center;
+    width: 100%;
   }
 }

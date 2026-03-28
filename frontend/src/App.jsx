@@ -357,14 +357,13 @@ function App() {
 						<a href="#contacto">Contacto</a>
 					</li>
 					<li>
-						<a href="/login">Ingresar</a>
-					</li>
-					<li>
-						<a href="/admin/login">Admin</a>
-					</li>
-					<li>
-						<a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noreferrer" className="nav-cta">
+						<a href="/productos" className="nav-cta">
 							Pedir ahora
+						</a>
+					</li>
+					<li>
+						<a href="/admin/login" className="nav-admin-btn">
+							Ingresar
 						</a>
 					</li>
 				</ul>
@@ -384,11 +383,11 @@ function App() {
 						</h1>
 						<p className="hero-sub">Arreglos florales con alma. Creados con amor para cada momento especial de tu vida.</p>
 						<div className="hero-actions">
-							<a href="#catalogo" className="btn-primary">
+							<a href="/productos" className="btn-primary">
 								Ver catalogo
 							</a>
-							<a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noreferrer" className="btn-ghost">
-								Pedir por WhatsApp
+							<a href="/productos" className="btn-ghost">
+								Pedir ahora
 							</a>
 						</div>
 					</div>

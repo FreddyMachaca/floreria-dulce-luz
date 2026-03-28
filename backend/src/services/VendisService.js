@@ -28,33 +28,80 @@ class VendisService {
     }
 
     async generateQr(amount, description) {
-        const qrExpiration = this.calculateExpirationDate();
+        try {
+            const qrExpiration = this.calculateExpirationDate();
 
-        const response = await this.client.post(vendisConfig.endpoints.generateQr, {
-            device_id: parseInt(vendisConfig.deviceId, 10),
-            amount: parseFloat(amount),
-            modify_amount: false,
-            is_multi_use: false,
-            qr_expiration: qrExpiration,
-            description: `Pago QR ${description}`
-        });
+            const response = await this.client.post(vendisConfig.endpoints.generateQr, {
+                device_id: parseInt(vendisConfig.deviceId, 10),
+                amount: parseFloat(amount),
+                modify_amount: false,
+                is_multi_use: false,
+                qr_expiration: qrExpiration,
+                description: `Pago QR ${description}`
+            });
 
-        if (!response.data.success) {
+            if (!response.data.success) {
+                return {
+                    success: false,
+                    message: response.data.message || 'Error al generar QR'
+                };
+            }
+
+            return {
+                success: true,
+                data: {
+                    qrImage: response.data.data.qr_image,
+                    qrUrl: response.data.data.qr_url,
+                    qrId: response.data.data.qr_id,
+                    expiration: qrExpiration,
+                    expirationMinutes: vendisConfig.qrExpirationMinutes
+                }
+            };
+        } catch (error) {
+            console.error('Error en VendisService.generateQr:', error.message);
             return {
                 success: false,
-                message: response.data.message || 'Error al generar QR'
+                message: 'Error de conexion con el servicio de pagos'
             };
         }
+    }
 
-        return {
-            success: true,
-            data: {
-                qrImage: response.data.data.qr_image,
-                qrUrl: response.data.data.qr_url,
-                qrId: response.data.data.qr_id,
-                qrExpiration
+    async getQrStatus(qrId) {
+        try {
+            const response = await this.client.get(`${vendisConfig.endpoints.getQrStatus}/${qrId}`);
+
+            if (!response.data.success) {
+                return {
+                    success: false,
+                    message: response.data.message || 'QR no encontrado'
+                };
             }
-        };
+
+            return {
+                success: true,
+                data: {
+                    status: response.data.data.status,
+                    payments: response.data.data.payments || []
+                }
+            };
+        } catch (error) {
+            console.error('Error en VendisService.getQrStatus:', error.message);
+            return {
+                success: false,
+                message: 'Error al verificar el estado del QR'
+            };
+        }
+    }
+
+    isQrExpired(expirationDate) {
+        if (!expirationDate) return true;
+        const now = new Date();
+        const expiration = new Date(expirationDate);
+        return now >= expiration;
+    }
+
+    getExpirationMinutes() {
+        return vendisConfig.qrExpirationMinutes;
     }
 }
 

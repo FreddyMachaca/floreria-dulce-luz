@@ -210,6 +210,25 @@ nav.scrolled {
 	display: none !important;
 }
 
+.nav-admin-btn {
+	background: rgba(255, 255, 255, 0.72);
+	color: var(--ink) !important;
+	padding: 0.45rem 1.2rem;
+	border-radius: 2rem;
+	font-size: 0.75rem !important;
+	letter-spacing: 0.12em;
+	border: 1px solid rgba(122, 96, 104, 0.22);
+}
+
+.nav-admin-btn:hover {
+	background: rgba(255, 255, 255, 0.9);
+	color: var(--rose) !important;
+}
+
+.nav-admin-btn::after {
+	display: none !important;
+}
+
 .hero {
 	position: relative;
 	height: 100vh;

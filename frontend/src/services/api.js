@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getSessionId } from '../utils/sessionUtils'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
@@ -14,6 +15,12 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+
+    const sessionId = getSessionId()
+    if (sessionId) {
+      config.headers['X-Session-Id'] = sessionId
+    }
+
     return config
   },
   (error) => Promise.reject(error),

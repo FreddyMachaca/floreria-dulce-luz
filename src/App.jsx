@@ -685,6 +685,9 @@ function App() {
 					<a href="https://www.instagram.com/floreriadulceluz" target="_blank" rel="noreferrer" className="btn-ghost">
 						Ver Instagram
 					</a>
+					<a href="https://www.tiktok.com/@floreria.dulce.luz" target="_blank" rel="noreferrer" className="btn-ghost">
+						Ver TikTok
+					</a>
 				</div>
 
 				<div className="contact-info reveal">

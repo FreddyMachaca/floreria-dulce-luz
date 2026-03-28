@@ -21,7 +21,7 @@ const procesarPago = async (carrito, payment) => {
         await connection.beginTransaction();
 
         const [items] = await connection.query(
-            `SELECT ci.producto_id, ci.cantidad, p.nombre, p.precio, p.cantidad as stock_disponible, p.es_servicio
+            `SELECT ci.producto_id, ci.cantidad, p.nombre, p.precio, p.cantidad as stock_disponible
              FROM carrito_items ci
              JOIN productos p ON p.id = ci.producto_id
              WHERE ci.carrito_id = ?
@@ -34,7 +34,7 @@ const procesarPago = async (carrito, payment) => {
         }
 
         for (const item of items) {
-            if (!item.es_servicio && item.stock_disponible < item.cantidad) {
+            if (item.stock_disponible < item.cantidad) {
                 throw new Error(`Stock insuficiente para ${item.nombre}`);
             }
         }
@@ -93,12 +93,10 @@ const procesarPago = async (carrito, payment) => {
                 [ordenId, item.producto_id, item.nombre, item.precio, item.cantidad, itemSubtotal]
             );
 
-            if (!item.es_servicio) {
-                await connection.query(
-                    'UPDATE productos SET cantidad = cantidad - ? WHERE id = ?',
-                    [item.cantidad, item.producto_id]
-                );
-            }
+            await connection.query(
+                'UPDATE productos SET cantidad = cantidad - ? WHERE id = ?',
+                [item.cantidad, item.producto_id]
+            );
         }
 
         await connection.query('DELETE FROM carrito_items WHERE carrito_id = ?', [carrito.id]);
@@ -170,7 +168,7 @@ const generateQr = async (req, res) => {
         }
 
         const [items] = await pool.query(
-            `SELECT ci.cantidad, p.nombre, p.precio, p.cantidad as stock_disponible, p.es_servicio
+            `SELECT ci.cantidad, p.nombre, p.precio, p.cantidad as stock_disponible
              FROM carrito_items ci
              JOIN productos p ON p.id = ci.producto_id
              WHERE ci.carrito_id = ?`,
@@ -185,7 +183,7 @@ const generateQr = async (req, res) => {
         }
 
         for (const item of items) {
-            if (!item.es_servicio && item.stock_disponible < item.cantidad) {
+            if (item.stock_disponible < item.cantidad) {
                 return res.status(400).json({
                     success: false,
                     message: `Stock insuficiente para ${item.nombre}`

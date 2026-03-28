@@ -4,6 +4,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const cron = require('node-cron');
+const path = require('path');
+const fs = require('fs');
 
 const routes = require('./routes');
 const errorHandler = require('./middlewares/errorHandler');
@@ -11,6 +13,12 @@ const { generalLimiter } = require('./middlewares/rateLimiter');
 const AuthService = require('./services/AuthService');
 
 const app = express();
+const uploadPath = process.env.UPLOAD_PATH || 'uploads';
+const uploadAbsolutePath = path.resolve(__dirname, '../', uploadPath);
+
+if (!fs.existsSync(uploadAbsolutePath)) {
+    fs.mkdirSync(uploadAbsolutePath, { recursive: true });
+}
 
 app.use(helmet());
 
@@ -26,6 +34,7 @@ app.use(generalLimiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
+app.use(`/${uploadPath}`, express.static(uploadAbsolutePath));
 
 app.use('/api', routes);
 

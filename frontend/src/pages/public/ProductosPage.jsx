@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { productoService } from '../../services/productoService'
+import { productoService, resolveImageUrl } from '../../services/productoService'
 import { useCart } from '../../context/useCart'
 import { formatCurrency } from '../../utils/currencyUtils'
 import './ShopPages.css'
@@ -111,11 +111,11 @@ const ProductosPage = () => {
               <article key={producto.id} className="product-card">
                 <div className="product-media">
                   {producto.imagen ? (
-                    <img src={producto.imagen} alt={producto.nombre} className="product-img" />
+                    <img src={resolveImageUrl(producto.imagen)} alt={producto.nombre} className="product-img" />
                   ) : (
                     <div className="product-img" />
                   )}
-                  <span className="product-badge">{producto.es_servicio ? 'Servicio' : 'Producto'}</span>
+                  <span className="product-badge">Producto</span>
                 </div>
 
                 <div className="product-name">{producto.nombre}</div>
@@ -123,7 +123,7 @@ const ProductosPage = () => {
 
                 <div className="product-meta">
                   <span className="product-price">{formatCurrency(producto.precio)}</span>
-                  <span className="product-tag">{producto.es_servicio ? 'Servicio' : `Stock ${producto.cantidad}`}</span>
+                  <span className="product-tag">Stock {producto.cantidad}</span>
                 </div>
 
                 <div className="product-actions">

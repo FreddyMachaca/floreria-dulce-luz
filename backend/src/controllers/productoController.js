@@ -1,4 +1,9 @@
+const fs = require('fs');
+const path = require('path');
 const pool = require('../config/db');
+
+const uploadPath = process.env.UPLOAD_PATH || 'uploads';
+const uploadAbsolutePath = path.resolve(__dirname, '../../', uploadPath);
 
 const parseBoolean = (value, defaultValue = false) => {
     if (value === undefined || value === null || value === '') return defaultValue;
@@ -10,6 +15,16 @@ const parseBoolean = (value, defaultValue = false) => {
         if (normalized === 'false' || normalized === '0') return false;
     }
     return defaultValue;
+};
+
+const removeLocalImage = (imagePath) => {
+    if (!imagePath || typeof imagePath !== 'string') return;
+    const normalized = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+    const localFile = path.resolve(__dirname, '../../', normalized);
+    if (!localFile.startsWith(uploadAbsolutePath)) return;
+    if (fs.existsSync(localFile)) {
+        fs.unlinkSync(localFile);
+    }
 };
 
 const getProductos = async (req, res) => {
@@ -45,7 +60,8 @@ const getProductos = async (req, res) => {
         );
 
         const [productos] = await pool.query(
-            `SELECT * FROM productos
+            `SELECT id, nombre, descripcion, precio, cantidad, imagen, estado, activo, created_at, updated_at
+             FROM productos
              WHERE ${whereClause}
              ORDER BY created_at DESC
              LIMIT ? OFFSET ?`,
@@ -96,7 +112,7 @@ const getProductosPublicos = async (req, res) => {
         );
 
         const [productos] = await pool.query(
-            `SELECT id, nombre, descripcion, precio, cantidad, es_servicio, imagen, estado
+            `SELECT id, nombre, descripcion, precio, cantidad, imagen, estado
              FROM productos
              WHERE ${whereClause}
              ORDER BY created_at DESC
@@ -129,7 +145,10 @@ const getProductoById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const [productos] = await pool.query('SELECT * FROM productos WHERE id = ?', [id]);
+        const [productos] = await pool.query(
+            'SELECT id, nombre, descripcion, precio, cantidad, imagen, estado, activo, created_at, updated_at FROM productos WHERE id = ?',
+            [id]
+        );
 
         if (productos.length === 0) {
             return res.status(404).json({
@@ -156,7 +175,7 @@ const getProductoPublicoById = async (req, res) => {
         const { id } = req.params;
 
         const [productos] = await pool.query(
-            `SELECT id, nombre, descripcion, precio, cantidad, es_servicio, imagen, estado
+            `SELECT id, nombre, descripcion, precio, cantidad, imagen, estado
              FROM productos
              WHERE id = ? AND activo = 1 AND estado = 'disponible'`,
             [id]
@@ -184,37 +203,29 @@ const getProductoPublicoById = async (req, res) => {
 
 const createProducto = async (req, res) => {
     try {
-        const {
-            nombre,
-            descripcion,
-            precio,
-            cantidad,
-            estado,
-            activo,
-            es_servicio,
-            imagen
-        } = req.body;
-
-        const esServicio = parseBoolean(es_servicio, false) ? 1 : 0;
+        const { nombre, descripcion, precio, cantidad, estado, activo } = req.body;
         const activoValue = parseBoolean(activo, true) ? 1 : 0;
-        const cantidadValue = esServicio ? 0 : (parseInt(cantidad, 10) || 0);
+        const cantidadValue = parseInt(cantidad, 10) || 0;
+        const imagePath = req.file ? `/${uploadPath}/${req.file.filename}` : null;
 
         const [result] = await pool.query(
-            `INSERT INTO productos (nombre, descripcion, precio, cantidad, es_servicio, imagen, estado, activo)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO productos (nombre, descripcion, precio, cantidad, imagen, estado, activo)
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [
                 nombre,
                 descripcion || null,
                 parseFloat(precio),
                 cantidadValue,
-                esServicio,
-                imagen || null,
+                imagePath,
                 estado || 'disponible',
                 activoValue
             ]
         );
 
-        const [nuevoProducto] = await pool.query('SELECT * FROM productos WHERE id = ?', [result.insertId]);
+        const [nuevoProducto] = await pool.query(
+            'SELECT id, nombre, descripcion, precio, cantidad, imagen, estado, activo, created_at, updated_at FROM productos WHERE id = ?',
+            [result.insertId]
+        );
 
         return res.status(201).json({
             success: true,
@@ -234,9 +245,15 @@ const updateProducto = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const [productos] = await pool.query('SELECT * FROM productos WHERE id = ?', [id]);
+        const [productos] = await pool.query(
+            'SELECT id, nombre, descripcion, precio, cantidad, imagen, estado, activo FROM productos WHERE id = ?',
+            [id]
+        );
 
         if (productos.length === 0) {
+            if (req.file) {
+                removeLocalImage(`/${uploadPath}/${req.file.filename}`);
+            }
             return res.status(404).json({
                 success: false,
                 message: 'Producto no encontrado'
@@ -244,32 +261,38 @@ const updateProducto = async (req, res) => {
         }
 
         const actual = productos[0];
-        const esServicio = req.body.es_servicio !== undefined
-            ? (parseBoolean(req.body.es_servicio, false) ? 1 : 0)
-            : actual.es_servicio;
+        let imagePath = actual.imagen;
 
-        const cantidadValue = esServicio
-            ? 0
-            : (req.body.cantidad !== undefined ? parseInt(req.body.cantidad, 10) || 0 : actual.cantidad);
+        if (req.file) {
+            removeLocalImage(actual.imagen);
+            imagePath = `/${uploadPath}/${req.file.filename}`;
+        }
+
+        if (parseBoolean(req.body.remove_imagen, false)) {
+            removeLocalImage(actual.imagen);
+            imagePath = null;
+        }
 
         await pool.query(
             `UPDATE productos
-             SET nombre = ?, descripcion = ?, precio = ?, cantidad = ?, es_servicio = ?, imagen = ?, estado = ?, activo = ?
+             SET nombre = ?, descripcion = ?, precio = ?, cantidad = ?, imagen = ?, estado = ?, activo = ?
              WHERE id = ?`,
             [
                 req.body.nombre ?? actual.nombre,
                 req.body.descripcion ?? actual.descripcion,
                 req.body.precio !== undefined ? parseFloat(req.body.precio) : actual.precio,
-                cantidadValue,
-                esServicio,
-                req.body.imagen !== undefined ? (req.body.imagen || null) : actual.imagen,
+                req.body.cantidad !== undefined ? (parseInt(req.body.cantidad, 10) || 0) : actual.cantidad,
+                imagePath,
                 req.body.estado ?? actual.estado,
                 req.body.activo !== undefined ? (parseBoolean(req.body.activo, true) ? 1 : 0) : actual.activo,
                 id
             ]
         );
 
-        const [productoActualizado] = await pool.query('SELECT * FROM productos WHERE id = ?', [id]);
+        const [productoActualizado] = await pool.query(
+            'SELECT id, nombre, descripcion, precio, cantidad, imagen, estado, activo, created_at, updated_at FROM productos WHERE id = ?',
+            [id]
+        );
 
         return res.json({
             success: true,
@@ -289,7 +312,10 @@ const deleteProducto = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const [productos] = await pool.query('SELECT id FROM productos WHERE id = ?', [id]);
+        const [productos] = await pool.query(
+            'SELECT id, imagen FROM productos WHERE id = ?',
+            [id]
+        );
 
         if (productos.length === 0) {
             return res.status(404).json({
@@ -298,6 +324,7 @@ const deleteProducto = async (req, res) => {
             });
         }
 
+        removeLocalImage(productos[0].imagen);
         await pool.query('DELETE FROM productos WHERE id = ?', [id]);
 
         return res.json({

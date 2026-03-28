@@ -24,7 +24,6 @@ CREATE TABLE productos (
     descripcion TEXT NULL,
     precio DECIMAL(10,2) NOT NULL,
     cantidad INT DEFAULT 0,
-    es_servicio TINYINT(1) DEFAULT 0,
     imagen VARCHAR(500) NULL,
     estado ENUM('disponible', 'no_disponible') DEFAULT 'disponible',
     activo TINYINT(1) DEFAULT 1,
@@ -119,10 +118,10 @@ CREATE TABLE refresh_tokens (
 INSERT INTO usuarios (email, password, nombre, apellido, rol, activo)
 VALUES ('admin@gmail.com', '$2b$12$KxdLwyFBBqAG8MmyeXYOFuxUInqnJAP9NJ6dc/.hURgzgrrl5Xyfi', 'Admin', 'Sistema', 'admin', 1);
 
-INSERT INTO productos (nombre, descripcion, precio, cantidad, es_servicio, imagen, estado, activo)
+INSERT INTO productos (nombre, descripcion, precio, cantidad, imagen, estado, activo)
 VALUES
-('Ramo Clasico Rosas Rojas', 'Ramo de rosas rojas premium con envoltura elegante.', 180.00, 25, 0, NULL, 'disponible', 1),
-('Arreglo en Caja Elegance', 'Caja floral con rosas, lirios y follaje natural.', 240.00, 20, 0, NULL, 'disponible', 1),
-('Bouquet Cumpleanos Dulce', 'Combinacion colorida para celebraciones especiales.', 150.00, 30, 0, NULL, 'disponible', 1),
-('Arreglo Lujo White Gold', 'Arreglo premium para aniversarios y eventos.', 320.00, 12, 0, NULL, 'disponible', 1),
-('Decoracion Floral Evento', 'Servicio de decoracion floral para eventos y bodas.', 850.00, 8, 1, NULL, 'disponible', 1);
+('Ramo Clasico Rosas Rojas', 'Ramo de rosas rojas premium con envoltura elegante.', 180.00, 25, NULL, 'disponible', 1),
+('Arreglo en Caja Elegance', 'Caja floral con rosas, lirios y follaje natural.', 240.00, 20, NULL, 'disponible', 1),
+('Bouquet Cumpleanos Dulce', 'Combinacion colorida para celebraciones especiales.', 150.00, 30, NULL, 'disponible', 1),
+('Arreglo Lujo White Gold', 'Arreglo premium para aniversarios y eventos.', 320.00, 12, NULL, 'disponible', 1),
+('Canasta Floral Celebracion', 'Canasta floral con chocolates y detalles premium.', 285.00, 18, NULL, 'disponible', 1);

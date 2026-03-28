@@ -3,6 +3,7 @@ const { body } = require('express-validator');
 const productoController = require('../controllers/productoController');
 const { verifyAccessToken, verifyAdmin } = require('../middlewares/auth');
 const validateRequest = require('../middlewares/validateRequest');
+const upload = require('../middlewares/upload');
 
 const router = express.Router();
 
@@ -16,6 +17,7 @@ router.post(
     '/',
     verifyAccessToken,
     verifyAdmin,
+    upload.single('imagen'),
     [
         body('nombre')
             .notEmpty()
@@ -35,11 +37,7 @@ router.post(
         body('estado')
             .optional()
             .isIn(['disponible', 'no_disponible'])
-            .withMessage('Estado invalido'),
-        body('es_servicio')
-            .optional()
-            .isBoolean()
-            .withMessage('El campo es_servicio debe ser booleano')
+            .withMessage('Estado invalido')
     ],
     validateRequest,
     productoController.createProducto
@@ -49,6 +47,7 @@ router.put(
     '/:id',
     verifyAccessToken,
     verifyAdmin,
+    upload.single('imagen'),
     [
         body('nombre')
             .optional()
@@ -70,11 +69,7 @@ router.put(
         body('activo')
             .optional()
             .isBoolean()
-            .withMessage('El campo activo debe ser booleano'),
-        body('es_servicio')
-            .optional()
-            .isBoolean()
-            .withMessage('El campo es_servicio debe ser booleano')
+            .withMessage('El campo activo debe ser booleano')
     ],
     validateRequest,
     productoController.updateProducto

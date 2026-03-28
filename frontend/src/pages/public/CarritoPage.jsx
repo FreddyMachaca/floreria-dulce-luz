@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../../context/useCart'
 import { formatCurrency } from '../../utils/currencyUtils'
+import { resolveImageUrl } from '../../services/productoService'
 import './ShopPages.css'
 
 const CarritoPage = () => {
@@ -82,12 +83,12 @@ const CarritoPage = () => {
             <section className="cart-list">
               {items.map((item) => (
                 <article className="cart-item" key={item.id}>
-                  {item.imagen ? <img src={item.imagen} alt={item.nombre} /> : <div className="product-img" />}
+                  {item.imagen ? <img src={resolveImageUrl(item.imagen)} alt={item.nombre} /> : <div className="product-img" />}
 
                   <div>
                     <div className="cart-item-name">{item.nombre}</div>
                     <div style={{ color: 'var(--muted)', fontSize: '0.88rem' }}>
-                      {item.es_servicio ? 'Servicio' : `Stock disponible ${item.stock_disponible}`}
+                      Stock disponible {item.stock_disponible}
                     </div>
                     <div style={{ marginTop: '0.45rem', color: 'var(--rose)', fontWeight: 700 }}>
                       {formatCurrency(item.subtotal)}
@@ -95,21 +96,15 @@ const CarritoPage = () => {
                   </div>
 
                   <div style={{ display: 'grid', gap: '0.5rem', justifyItems: 'end' }}>
-                    {!item.es_servicio ? (
-                      <div className="qty-controls">
-                        <button type="button" onClick={() => handleDecrease(item)}>
-                          -
-                        </button>
-                        <span>{item.cantidad}</span>
-                        <button type="button" onClick={() => handleIncrease(item)}>
-                          +
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="qty-controls">
-                        <span>{item.cantidad}</span>
-                      </div>
-                    )}
+                    <div className="qty-controls">
+                      <button type="button" onClick={() => handleDecrease(item)}>
+                        -
+                      </button>
+                      <span>{item.cantidad}</span>
+                      <button type="button" onClick={() => handleIncrease(item)}>
+                        +
+                      </button>
+                    </div>
 
                     <button type="button" className="shop-button secondary" onClick={() => handleRemove(item.id)}>
                       Eliminar

@@ -63,11 +63,6 @@ const AdminLayout = ({ title, subtitle, actions, children }) => {
               <span>{item.label}</span>
             </NavLink>
           ))}
-
-          <NavLink to="/" className="admin-nav-item" onClick={closeMobile}>
-            <i className="pi pi-home" />
-            <span>Ir a tienda</span>
-          </NavLink>
         </nav>
 
         <div className="admin-sidebar-footer">

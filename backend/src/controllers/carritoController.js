@@ -41,7 +41,6 @@ const getCarrito = async (req, res) => {
                 p.precio,
                 p.imagen,
                 p.cantidad as stock_disponible,
-                p.es_servicio,
                 (ci.cantidad * p.precio) as subtotal
              FROM carrito_items ci
              JOIN productos p ON ci.producto_id = p.id
@@ -116,7 +115,7 @@ const addItem = async (req, res) => {
 
         const producto = productos[0];
 
-        if (!producto.es_servicio && producto.cantidad < cantidad) {
+        if (producto.cantidad < cantidad) {
             return res.status(400).json({
                 success: false,
                 message: 'Stock insuficiente'
@@ -134,7 +133,7 @@ const addItem = async (req, res) => {
         if (existingItem.length > 0) {
             const nuevaCantidad = existingItem[0].cantidad + cantidad;
 
-            if (!producto.es_servicio && producto.cantidad < nuevaCantidad) {
+            if (producto.cantidad < nuevaCantidad) {
                 return res.status(400).json({
                     success: false,
                     message: 'Stock insuficiente'
@@ -181,7 +180,7 @@ const updateItemQuantity = async (req, res) => {
         const carrito = await getOrCreateCarrito(sessionId);
 
         const [items] = await pool.query(
-            `SELECT ci.*, p.cantidad as stock_disponible, p.es_servicio
+            `SELECT ci.*, p.cantidad as stock_disponible
              FROM carrito_items ci
              JOIN productos p ON ci.producto_id = p.id
              WHERE ci.id = ? AND ci.carrito_id = ?`,
@@ -195,7 +194,7 @@ const updateItemQuantity = async (req, res) => {
             });
         }
 
-        if (!items[0].es_servicio && cantidad > items[0].stock_disponible) {
+        if (cantidad > items[0].stock_disponible) {
             return res.status(400).json({
                 success: false,
                 message: 'Stock insuficiente'

@@ -27,10 +27,42 @@ html {
 
 body {
 	font-family: 'Jost', sans-serif;
-	background: var(--cream);
+	background: transparent;
 	color: var(--ink);
 	overflow-x: hidden;
 	cursor: none;
+}
+
+.global-spline-background {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	opacity: 0.92;
+	will-change: transform;
+	transform-origin: center;
+	transform: translate3d(0, 0, 0) scale(1.08);
+}
+
+.global-spline-background > div,
+.global-spline-background canvas {
+	width: 100% !important;
+	height: 100% !important;
+}
+
+.global-spline-tint {
+	position: fixed;
+	inset: 0;
+	z-index: 1;
+	pointer-events: none;
+	background:
+		radial-gradient(ellipse at center, rgba(250, 245, 238, 0.09) 0%, rgba(250, 245, 238, 0.2) 58%, rgba(250, 245, 238, 0.3) 100%),
+		linear-gradient(to bottom, rgba(250, 245, 238, 0.14), rgba(250, 245, 238, 0.24));
+}
+
+.page-shell {
+	position: relative;
+	z-index: 2;
 }
 
 .cursor {
@@ -99,7 +131,7 @@ nav {
 }
 
 nav.scrolled {
-	background: rgba(250, 245, 238, 0.88);
+	background: rgba(250, 245, 238, 0.72);
 	backdrop-filter: blur(16px);
 	padding: 1rem 3rem;
 	border-bottom: 1px solid rgba(201, 120, 138, 0.15);
@@ -190,12 +222,11 @@ nav.scrolled {
 .hero-layout {
 	position: relative;
 	z-index: 9;
-	width: min(1280px, 100%);
+	width: min(980px, 100%);
 	height: 100%;
-	display: grid;
-	grid-template-columns: 0.95fr 1.05fr;
+	display: flex;
 	align-items: center;
-	gap: 1rem;
+	justify-content: center;
 	padding: 6.5rem 3rem 3.5rem;
 }
 
@@ -209,6 +240,7 @@ nav.scrolled {
 .layer-bg {
 	background: radial-gradient(ellipse 80% 70% at 60% 40%, #f5d8df 0%, #f7ece0 50%, #faf5ee 100%);
 	inset: 0;
+	opacity: 0.16;
 }
 
 .layer-mist {
@@ -216,23 +248,7 @@ nav.scrolled {
 		radial-gradient(ellipse 50% 40% at 20% 80%, rgba(232, 180, 192, 0.45) 0%, transparent 70%),
 		radial-gradient(ellipse 40% 50% at 80% 20%, rgba(184, 205, 184, 0.3) 0%, transparent 70%);
 	inset: 0;
-}
-
-.spline-layer {
-	position: relative;
-	inset: auto;
-	z-index: 7;
-	opacity: 0.95;
-	will-change: transform;
-	height: min(90vh, 860px);
-	width: 108%;
-	margin-left: -4%;
-}
-
-.spline-layer > div,
-.spline-layer canvas {
-	width: 100% !important;
-	height: 100% !important;
+	opacity: 0.36;
 }
 
 .flower-layer {
@@ -244,11 +260,11 @@ nav.scrolled {
 .hero-content {
 	position: relative;
 	z-index: 10;
-	text-align: left;
+	text-align: center;
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
-	max-width: 620px;
+	align-items: center;
+	max-width: 760px;
 }
 
 .hero-eyebrow {
@@ -286,7 +302,7 @@ nav.scrolled {
 	font-weight: 300;
 	letter-spacing: 0.06em;
 	margin-top: 1.4rem;
-	max-width: 420px;
+	max-width: 560px;
 	line-height: 1.7;
 	opacity: 0;
 	transform: translateY(20px);
@@ -296,6 +312,8 @@ nav.scrolled {
 .hero-actions {
 	display: flex;
 	gap: 1rem;
+	justify-content: center;
+	flex-wrap: wrap;
 	margin-top: 2.5rem;
 	opacity: 0;
 	transform: translateY(20px);
@@ -354,7 +372,7 @@ nav.scrolled {
 }
 
 .marquee-wrap {
-	background: var(--rose);
+	background: rgba(201, 120, 138, 0.78);
 	padding: 0.9rem 0;
 	overflow: hidden;
 	position: relative;
@@ -396,7 +414,7 @@ nav.scrolled {
 }
 
 .about-visual {
-	background: var(--petal);
+	background: rgba(253, 238, 241, 0.66);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -523,7 +541,7 @@ nav.scrolled {
 
 .categories {
 	padding: 6rem 3rem;
-	background: var(--cream);
+	background: rgba(250, 245, 238, 0.56);
 }
 
 .section-header {
@@ -659,7 +677,7 @@ nav.scrolled {
 
 .extras {
 	padding: 5rem 3rem;
-	background: var(--petal);
+	background: rgba(253, 238, 241, 0.62);
 	text-align: center;
 }
 
@@ -710,7 +728,7 @@ nav.scrolled {
 }
 
 .delivery {
-	background: var(--ink);
+	background: rgba(42, 26, 30, 0.86);
 	color: #fff;
 	padding: 5rem 3rem;
 	text-align: center;
@@ -785,7 +803,7 @@ nav.scrolled {
 
 .cta-section {
 	padding: 7rem 3rem;
-	background: linear-gradient(135deg, var(--blush) 0%, var(--cream) 60%, var(--petal) 100%);
+	background: linear-gradient(135deg, rgba(245, 230, 232, 0.72) 0%, rgba(250, 245, 238, 0.62) 60%, rgba(253, 238, 241, 0.72) 100%);
 	text-align: center;
 	position: relative;
 	overflow: hidden;
@@ -881,7 +899,7 @@ nav.scrolled {
 }
 
 footer {
-	background: var(--ink);
+	background: rgba(42, 26, 30, 0.88);
 	color: rgba(255, 255, 255, 0.5);
 	padding: 2.5rem 3rem;
 	display: flex;
@@ -1022,8 +1040,7 @@ footer {
 	}
 
 	.hero-layout {
-		grid-template-columns: 1fr;
-		gap: 0.6rem;
+		justify-content: center;
 		padding: 6.2rem 1.5rem 3rem;
 	}
 
@@ -1031,13 +1048,6 @@ footer {
 		text-align: center;
 		align-items: center;
 		max-width: 100%;
-	}
-
-	.spline-layer {
-		opacity: 0.88;
-		height: 52vh;
-		width: 100%;
-		margin: 0;
 	}
 
 	.about {
@@ -1070,5 +1080,9 @@ footer {
 	footer {
 		flex-direction: column;
 		text-align: center;
+	}
+
+	.global-spline-background {
+		opacity: 0.86;
 	}
 }

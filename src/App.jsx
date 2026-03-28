@@ -14,27 +14,122 @@ function App() {
 	const heroRef = useRef(null)
 	const cursorDotRef = useRef(null)
 	const cursorRingRef = useRef(null)
+	const globalBackgroundRef = useRef(null)
+	const globalSplineAppRef = useRef(null)
+	const globalSplineObjectsRef = useRef([])
 	const layerMistRef = useRef(null)
-	const splineLayerRef = useRef(null)
 	const canvasRef = useRef(null)
 
-	const handleSplineLoad = (splineApp) => {
-		const orbit = splineApp?.controls?.orbitControls
+	const getOrbitControls = (splineApp) => {
+		const controls = splineApp?.controls?.orbitControls ?? splineApp?.controls
+		if (!controls || typeof controls !== 'object') return null
+		return controls
+	}
+
+	const handleGlobalBackgroundLoad = (splineApp) => {
+		globalSplineAppRef.current = splineApp
+		if (typeof splineApp?.getAllObjects === 'function') {
+			globalSplineObjectsRef.current = splineApp.getAllObjects().filter((obj) => obj?.rotation)
+		}
+		const orbit = getOrbitControls(splineApp)
 		if (!orbit) return
 		const isMobile = window.matchMedia('(max-width: 768px)').matches
 		orbit.enableZoom = false
 		orbit.isTouchZoom = false
 		orbit.enablePan = false
 		orbit.enableRotate = true
-		if (isMobile && Array.isArray(orbit.touches)) {
+		orbit.enableDamping = true
+		orbit.dampingFactor = 0.08
+		orbit.minPolarAngle = Math.PI / 2
+		orbit.maxPolarAngle = Math.PI / 2
+		if ('autoRotate' in orbit) {
+			orbit.autoRotate = true
+			orbit.autoRotateSpeed = 0
+		}
+		if (Array.isArray(orbit.touches)) {
 			orbit.touches[0] = 0
 			orbit.touches[1] = 0
 			orbit.touches[2] = 0
 		}
 		if (typeof splineApp?.setZoom === 'function') {
-			splineApp.setZoom(isMobile ? 0.56 : 1)
+			splineApp.setZoom(isMobile ? 0.92 : 1)
 		}
 	}
+
+	useEffect(() => {
+		const bg = globalBackgroundRef.current
+		if (!bg) return
+
+		bg.style.transform = 'translate3d(0, 0, 0) scale(1.08)'
+
+		let lastScrollY = window.scrollY
+		let angle = 0
+		let velocity = 0
+		let breathePhase = 0
+		let raf = 0
+		let lastTime = window.performance.now()
+
+		const onScroll = () => {
+			const currentY = window.scrollY
+			const deltaY = currentY - lastScrollY
+			lastScrollY = currentY
+
+			velocity += deltaY * 0.00014
+			velocity = Math.max(-0.02, Math.min(0.02, velocity))
+		}
+
+		const animate = (time) => {
+			const dt = Math.min(0.05, (time - lastTime) / 1000 || 0.016)
+			lastTime = time
+
+			const damping = Math.pow(0.9, dt * 60)
+			velocity *= damping
+			if (Math.abs(velocity) < 0.00001) {
+				velocity = 0
+			}
+
+			const step = velocity * (dt * 60)
+			angle += step
+			breathePhase += dt * 1.1
+			const breathing = Math.sin(breathePhase) * 0.0008
+			const orbit = getOrbitControls(globalSplineAppRef.current)
+
+			if (orbit) {
+				if (typeof orbit.setPolarAngle === 'function') {
+					orbit.setPolarAngle(Math.PI / 2)
+				}
+				if ('autoRotate' in orbit) {
+					orbit.autoRotate = true
+					orbit.autoRotateSpeed = Math.max(-4.2, Math.min(4.2, velocity * 120 + Math.sin(breathePhase * 0.7) * 0.12))
+				} else if (typeof orbit.setAzimuthalAngle === 'function') {
+					orbit.setAzimuthalAngle(angle + breathing)
+				} else if (typeof orbit.rotateLeft === 'function') {
+					orbit.rotateLeft(-(step + breathing))
+				}
+				if (typeof orbit.update === 'function') {
+					orbit.update(dt)
+				}
+			} else if (globalSplineObjectsRef.current.length > 0) {
+				const objectStep = step * 0.85 + breathing
+				for (const obj of globalSplineObjectsRef.current) {
+					obj.rotation.y += objectStep
+				}
+				if (typeof globalSplineAppRef.current?.requestRender === 'function') {
+					globalSplineAppRef.current.requestRender()
+				}
+			}
+
+			raf = window.requestAnimationFrame(animate)
+		}
+
+		window.addEventListener('scroll', onScroll, { passive: true })
+		raf = window.requestAnimationFrame(animate)
+
+		return () => {
+			window.removeEventListener('scroll', onScroll)
+			window.cancelAnimationFrame(raf)
+		}
+	}, [])
 
 	useEffect(() => {
 		const dot = cursorDotRef.current
@@ -89,10 +184,7 @@ function App() {
 
 	useEffect(() => {
 		const hero = heroRef.current
-		const layers = [
-			{ el: splineLayerRef.current, depth: 0.18 },
-			{ el: layerMistRef.current, depth: 0.08 },
-		].filter((item) => item.el)
+		const layers = [{ el: layerMistRef.current, depth: 0.08 }].filter((item) => item.el)
 
 		if (!hero || layers.length === 0) return
 
@@ -234,6 +326,12 @@ function App() {
 
 	return (
 		<>
+			<div className="global-spline-background" ref={globalBackgroundRef} aria-hidden="true">
+				<Spline scene="https://prod.spline.design/2bdaZT88Mt9EF-O2/scene.splinecode" onLoad={handleGlobalBackgroundLoad} renderOnDemand={false} />
+			</div>
+			<div className="global-spline-tint" aria-hidden="true" />
+
+			<div className="page-shell">
 			<div className="cursor">
 				<div className="cursor-dot" ref={cursorDotRef} />
 			</div>
@@ -287,10 +385,6 @@ function App() {
 								Pedir por WhatsApp
 							</a>
 						</div>
-					</div>
-
-					<div className="spline-layer" ref={splineLayerRef}>
-						<Spline scene="https://prod.spline.design/Tp05cFRZa6wXbbmp/scene.splinecode" onLoad={handleSplineLoad} />
 					</div>
 				</div>
 
@@ -628,6 +722,7 @@ function App() {
 					</a>
 				</div>
 			</footer>
+			</div>
 		</>
 	)
 }

@@ -357,6 +357,12 @@ function App() {
 						<a href="#contacto">Contacto</a>
 					</li>
 					<li>
+						<a href="/login">Ingresar</a>
+					</li>
+					<li>
+						<a href="/admin/login">Admin</a>
+					</li>
+					<li>
 						<a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noreferrer" className="nav-cta">
 							Pedir ahora
 						</a>

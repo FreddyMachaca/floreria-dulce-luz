@@ -500,7 +500,7 @@ function App() {
 					</div>
 
 					<div className="cat-card reveal" onClick={() => openWhatsApp('Hola! Quiero un arreglo personalizado')}>
-						<div className="cat-bg" style={{ background: 'linear-gradient(135deg,#fce8f0 0%,#f5b8d0 50%,#e090b0 100%)' }} />
+						<div className="cat-bg" />
 						<div className="cat-flower">
 							<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
 								<ellipse cx="50" cy="20" rx="12" ry="22" fill="rgba(255,255,255,.6)" transform="rotate(0,50,50)" />
@@ -519,7 +519,7 @@ function App() {
 					</div>
 
 					<div className="cat-card reveal" onClick={() => openWhatsApp('Hola! Cuentame sobre los arreglos para fechas especiales')}>
-						<div className="cat-bg" style={{ background: 'linear-gradient(135deg,#e8f0fc 0%,#b0c8f0 50%,#88a8e0 100%)' }} />
+						<div className="cat-bg" />
 						<div className="cat-flower">
 							<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
 								<ellipse cx="50" cy="20" rx="13" ry="23" fill="rgba(255,255,255,.55)" transform="rotate(0,50,50)" />

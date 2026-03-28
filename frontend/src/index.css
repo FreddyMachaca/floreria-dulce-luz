@@ -597,6 +597,9 @@ nav.scrolled {
 .cat-bg {
 	position: absolute;
 	inset: 0;
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
 	transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -605,45 +608,35 @@ nav.scrolled {
 }
 
 .cat-card:nth-child(1) .cat-bg {
-	background: linear-gradient(135deg, #f5d0d8 0%, #e8b4c0 50%, #d4a0b0 100%);
+	background-image: url('/images/categories/ramos.jpg');
 }
 
 .cat-card:nth-child(2) .cat-bg {
-	background: linear-gradient(135deg, #e8f0e8 0%, #b8cdb8 50%, #9abaa0 100%);
+	background-image: url('/images/categories/caja.jpg');
 }
 
 .cat-card:nth-child(3) .cat-bg {
-	background: linear-gradient(135deg, #fdecd0 0%, #e8d5b0 50%, #d4bc88 100%);
+	background-image: url('/images/categories/lujo.jpg');
 }
 
 .cat-card:nth-child(4) .cat-bg {
-	background: linear-gradient(135deg, #f0e8f5 0%, #d4b8e0 50%, #b89acc 100%);
+	background-image: url('/images/categories/eventos.jpg');
 }
 
 .cat-card:nth-child(5) .cat-bg {
-	background: linear-gradient(135deg, #fde8e8 0%, #f0b8b8 50%, #d89090 100%);
+	background-image: url('/images/categories/ocasiones.jpg');
 }
 
 .cat-card:nth-child(6) .cat-bg {
-	background: linear-gradient(135deg, #e8f4f0 0%, #b0d4c8 50%, #88b8a8 100%);
+	background-image: url('/images/categories/condolencias.jpg');
 }
 
 .cat-flower {
-	position: absolute;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	opacity: 0.35;
-	transition:
-		opacity 0.4s,
-		transform 0.4s;
-	transform: scale(0.9) rotate(-5deg);
+	display: none;
 }
 
 .cat-card:hover .cat-flower {
-	opacity: 0.5;
-	transform: scale(1) rotate(0deg);
+	display: none;
 }
 
 .cat-flower svg {

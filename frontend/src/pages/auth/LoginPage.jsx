@@ -59,7 +59,7 @@ const LoginPage = ({ adminMode = false }) => {
               required
               value={formData.email}
               onChange={handleChange}
-              placeholder={adminMode ? 'admin@gmail.com' : 'tu@email.com'}
+              placeholder={adminMode ? 'Correo Electronico' : 'tu@email.com'}
             />
           </label>
 

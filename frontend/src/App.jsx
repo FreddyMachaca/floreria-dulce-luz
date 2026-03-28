@@ -12,8 +12,6 @@ function openWhatsApp(text) {
 function App() {
 	const navRef = useRef(null)
 	const heroRef = useRef(null)
-	const cursorDotRef = useRef(null)
-	const cursorRingRef = useRef(null)
 	const globalBackgroundRef = useRef(null)
 	const globalSplineAppRef = useRef(null)
 	const globalSplineObjectsRef = useRef([])
@@ -128,44 +126,6 @@ function App() {
 		return () => {
 			window.removeEventListener('scroll', onScroll)
 			window.cancelAnimationFrame(raf)
-		}
-	}, [])
-
-	useEffect(() => {
-		const dot = cursorDotRef.current
-		const ring = cursorRingRef.current
-		if (!dot || !ring) return
-
-		const supportsFinePointer = window.matchMedia('(pointer:fine)').matches
-		if (!supportsFinePointer) return
-
-		let mx = 0
-		let my = 0
-		let rx = 0
-		let ry = 0
-		let frame = 0
-
-		const onMouseMove = (e) => {
-			mx = e.clientX
-			my = e.clientY
-		}
-
-		const animate = () => {
-			dot.style.left = `${mx}px`
-			dot.style.top = `${my}px`
-			rx += (mx - rx) * 0.12
-			ry += (my - ry) * 0.12
-			ring.style.left = `${rx}px`
-			ring.style.top = `${ry}px`
-			frame = window.requestAnimationFrame(animate)
-		}
-
-		window.addEventListener('mousemove', onMouseMove)
-		frame = window.requestAnimationFrame(animate)
-
-		return () => {
-			window.removeEventListener('mousemove', onMouseMove)
-			window.cancelAnimationFrame(frame)
 		}
 	}, [])
 
@@ -332,11 +292,6 @@ function App() {
 			<div className="global-spline-tint" aria-hidden="true" />
 
 			<div className="page-shell">
-			<div className="cursor">
-				<div className="cursor-dot" ref={cursorDotRef} />
-			</div>
-			<div className="cursor-ring" ref={cursorRingRef} />
-
 			<canvas id="petal-canvas" ref={canvasRef} />
 
 			<nav id="navbar" ref={navRef}>

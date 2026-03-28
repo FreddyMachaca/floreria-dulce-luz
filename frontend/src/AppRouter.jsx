@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import LandingPage from './App'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
+import GlobalCursor from './components/public/GlobalCursor'
 import LoginPage from './pages/auth/LoginPage'
 import RegisterPage from './pages/auth/RegisterPage'
 import DashboardPage from './pages/admin/DashboardPage'
@@ -16,6 +17,7 @@ import ProtectedRoute from './components/admin/ProtectedRoute'
 function AppRouter() {
   return (
     <BrowserRouter>
+      <GlobalCursor />
       <AuthProvider>
         <CartProvider>
           <Routes>

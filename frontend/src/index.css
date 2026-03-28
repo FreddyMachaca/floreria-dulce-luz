@@ -30,7 +30,12 @@ body {
 	background: transparent;
 	color: var(--ink);
 	overflow-x: hidden;
-	cursor: none;
+	cursor: auto;
+}
+
+body.custom-cursor-active,
+body.custom-cursor-active * {
+	cursor: none !important;
 }
 
 .global-spline-background {

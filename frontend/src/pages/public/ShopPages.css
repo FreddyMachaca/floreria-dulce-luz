@@ -442,6 +442,13 @@
   font-size: 0.9rem;
 }
 
+.checkout-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 900px) {
   .shop-toolbar {
     align-items: stretch;
@@ -461,6 +468,10 @@
 
   .checkout-full {
     grid-column: span 1;
+  }
+
+  .checkout-actions {
+    width: 100%;
   }
 }
 
@@ -488,5 +499,10 @@
   .qr-amount {
     text-align: center;
     width: 100%;
+  }
+
+  .checkout-actions .shop-button {
+    width: 100%;
+    text-align: center;
   }
 }

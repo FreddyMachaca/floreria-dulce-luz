@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { jsPDF } from 'jspdf'
 import { checkoutService } from '../../services/checkoutService'
 import { useCart } from '../../context/useCart'
 import { formatCurrency } from '../../utils/currencyUtils'
@@ -161,6 +162,80 @@ const CheckoutPage = () => {
     }
   }
 
+  const handleDownloadReceipt = () => {
+    if (!ordenData || !clienteData) {
+      setMessage('No hay datos suficientes para generar el recibo')
+      return
+    }
+
+    const doc = new jsPDF()
+    const fecha = new Date().toLocaleString('es-BO', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+
+    const codigo = ordenData?.codigoUnico || 'SIN-CODIGO'
+    const total = formatCurrency(ordenData?.total)
+
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(20)
+    doc.text('Floreria Dulce Luz', 105, 20, { align: 'center' })
+
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(12)
+    doc.text('Recibo de pago', 105, 28, { align: 'center' })
+
+    doc.setDrawColor(201, 120, 138)
+    doc.line(20, 34, 190, 34)
+
+    let y = 46
+
+    doc.setFont('helvetica', 'bold')
+    doc.text('Codigo de orden:', 20, y)
+    doc.setFont('helvetica', 'normal')
+    doc.text(codigo, 70, y)
+
+    y += 8
+    doc.setFont('helvetica', 'bold')
+    doc.text('Fecha:', 20, y)
+    doc.setFont('helvetica', 'normal')
+    doc.text(fecha, 70, y)
+
+    y += 8
+    doc.setFont('helvetica', 'bold')
+    doc.text('Cliente:', 20, y)
+    doc.setFont('helvetica', 'normal')
+    doc.text(`${clienteData.nombre} ${clienteData.apellido}`, 70, y)
+
+    y += 8
+    doc.setFont('helvetica', 'bold')
+    doc.text('Telefono:', 20, y)
+    doc.setFont('helvetica', 'normal')
+    doc.text(clienteData.telefono, 70, y)
+
+    y += 8
+    doc.setFont('helvetica', 'bold')
+    doc.text('Departamento:', 20, y)
+    doc.setFont('helvetica', 'normal')
+    doc.text(clienteData.departamento, 70, y)
+
+    y += 14
+    doc.setFillColor(253, 238, 241)
+    doc.roundedRect(20, y - 7, 170, 14, 2, 2, 'F')
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(15)
+    doc.text(`Total pagado: ${total}`, 105, y + 2, { align: 'center' })
+
+    doc.setFontSize(10)
+    doc.setFont('helvetica', 'normal')
+    doc.text('Este documento es tu respaldo de pago.', 105, 275, { align: 'center' })
+
+    doc.save(`recibo-${codigo}.pdf`)
+  }
+
   return (
     <main className="shop-shell">
       <section className="shop-container">
@@ -264,9 +339,14 @@ const CheckoutPage = () => {
               </div>
             </div>
 
-            <button type="button" className="shop-button" onClick={() => navigate('/', { replace: true })}>
-              Volver al inicio
-            </button>
+            <div className="checkout-actions">
+              <button type="button" className="shop-button secondary" onClick={handleDownloadReceipt}>
+                Descargar recibo PDF
+              </button>
+              <button type="button" className="shop-button" onClick={() => navigate('/', { replace: true })}>
+                Volver al inicio
+              </button>
+            </div>
           </section>
         ) : null}
       </section>

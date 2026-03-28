@@ -4,7 +4,43 @@ import { ordenService } from '../../services/ordenService'
 import { formatCurrency } from '../../utils/currencyUtils'
 import './AdminPanel.css'
 
-const estadosDisponibles = ['pendiente', 'pagado', 'cancelado']
+const estadoLabelMap = {
+  pendiente: 'pendiente',
+  pagado: 'pagado',
+  cancelado: 'cancelado',
+}
+
+const estadoClassMap = {
+  pendiente: 'warn',
+  pagado: 'ok',
+  cancelado: 'off',
+}
+
+const formatFechaBolivia = (value) => {
+  if (!value) return '-'
+
+  let normalized = value
+  if (typeof value === 'string') {
+    if (value.includes('T')) {
+      normalized = value.endsWith('Z') ? value : `${value}Z`
+    } else {
+      normalized = `${value.replace(' ', 'T')}Z`
+    }
+  }
+
+  const date = new Date(normalized)
+  if (Number.isNaN(date.getTime())) return String(value)
+
+  return date.toLocaleString('es-BO', {
+    timeZone: 'America/La_Paz',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+}
 
 const OrdenesPage = () => {
   const [ordenes, setOrdenes] = useState([])
@@ -26,16 +62,6 @@ const OrdenesPage = () => {
   useEffect(() => {
     loadOrdenes()
   }, [loadOrdenes])
-
-  const handleEstadoChange = async (ordenId, estado) => {
-    try {
-      await ordenService.updateOrdenEstado(ordenId, estado)
-      setMessage('Estado actualizado')
-      await loadOrdenes()
-    } catch (error) {
-      setMessage(error.response?.data?.message || 'No se pudo actualizar el estado')
-    }
-  }
 
   return (
     <AdminLayout title="Gestion de Ordenes" subtitle="Control de estados de compra y seguimiento de pedidos">
@@ -70,18 +96,11 @@ const OrdenesPage = () => {
                     <td>{orden.cliente_nombre} {orden.cliente_apellido}</td>
                     <td>{orden.cliente_telefono}</td>
                     <td>{formatCurrency(orden.total)}</td>
-                    <td>{new Date(orden.created_at).toLocaleString('es-BO')}</td>
+                    <td>{formatFechaBolivia(orden.created_at)}</td>
                     <td>
-                      <select
-                        value={orden.estado}
-                        onChange={(event) => handleEstadoChange(orden.id, event.target.value)}
-                      >
-                        {estadosDisponibles.map((estado) => (
-                          <option key={estado} value={estado}>
-                            {estado}
-                          </option>
-                        ))}
-                      </select>
+                      <span className={`admin-chip ${estadoClassMap[orden.estado] || 'off'}`}>
+                        {estadoLabelMap[orden.estado] || orden.estado}
+                      </span>
                     </td>
                   </tr>
                 ))

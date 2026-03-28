@@ -142,26 +142,9 @@ const getOrdenByCodigo = async (req, res) => {
 
 const updateOrdenEstado = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { estado } = req.body;
-
-        const [ordenes] = await pool.query('SELECT id FROM ordenes WHERE id = ?', [id]);
-
-        if (ordenes.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Orden no encontrada'
-            });
-        }
-
-        await pool.query('UPDATE ordenes SET estado = ? WHERE id = ?', [estado, id]);
-
-        const [ordenActualizada] = await pool.query('SELECT * FROM ordenes WHERE id = ?', [id]);
-
-        return res.json({
-            success: true,
-            message: 'Estado de orden actualizado',
-            data: ordenActualizada[0]
+        return res.status(403).json({
+            success: false,
+            message: 'El estado de pago no puede modificarse manualmente. Se actualiza automaticamente con la validacion del QR.'
         });
     } catch (error) {
         console.error('Error en updateOrdenEstado:', error);
